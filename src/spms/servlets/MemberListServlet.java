@@ -29,11 +29,7 @@ public class MemberListServlet extends HttpServlet {
 
 		try {
 			ServletContext sc = this.getServletContext();
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"),
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
+			conn = (Connection)sc.getAttribute("conn");
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery("select MNO, MNAME, EMAIL, CRE_DATE" + " from MEMBERS order by MNO ASC");
 			
@@ -52,16 +48,19 @@ public class MemberListServlet extends HttpServlet {
 			// requset에 회원정보를 보관한다.
 			request.setAttribute("members", members);
 			
-			// Dispatcher를 사용해 jsp로 출력을 위임한다.
+			// Dispatcher를 사용해 jsp로 출력을 위임한다.(include)
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberList.jsp");
 			rd.include(request, response);
 			
 		} catch(Exception e) {
-			throw new ServletException(e);
+//			throw new ServletException(e);
+			request.setAttribute("error", e);
+			// forward 방식
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 		} finally {
 			try { if (rs != null) rs.close(); } catch (Exception e){}
 			try { if (stmt != null) stmt.close(); } catch (Exception e){}
-			try { if (conn != null) conn.close(); } catch (Exception e){}
 		}
 	}
 
