@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MemberAddServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		RequestDispatcher rd = request.getRequestDispatcher("/member/MemberAdd.jsp");
+		RequestDispatcher rd = request.getRequestDispatcher("/member/MemberForm.jsp");
 		rd.forward(request, response);
 	}
 	
@@ -29,6 +29,9 @@ public class MemberAddServlet extends HttpServlet {
 		PreparedStatement stmt = null;
 		
 		try {
+			if ( (req.getParameter("email") == null  || req.getParameter("password") == null|| req.getParameter("name") == null )) {
+				throw new Exception();
+			}
 			ServletContext sc = this.getServletContext();
 			conn = (Connection)sc.getAttribute("conn");
 			stmt = conn.prepareStatement(
@@ -42,7 +45,11 @@ public class MemberAddServlet extends HttpServlet {
 			resp.sendRedirect("list");
 		
 		} catch (Exception e) {
-			throw new ServletException(e);
+			System.out.println("Exception !");
+			req.setAttribute("error", e);
+			// forward 방식
+			RequestDispatcher rd = req.getRequestDispatcher("/Error.jsp");
+			rd.forward(req, resp);
 		} finally {
 			try { if (stmt != null) stmt.close(); } catch (Exception e) {}
 		}

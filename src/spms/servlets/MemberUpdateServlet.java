@@ -70,7 +70,11 @@ public class MemberUpdateServlet extends HttpServlet {
 			response.sendRedirect("list");
 			
 		} catch (Exception e) {
-			throw new ServletException(e);
+//			throw new ServletException(e);
+			request.setAttribute("error", e);
+			// forward 방식
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 		} finally {
 			try { if ( pstmt != null ) pstmt.close();} catch (Exception e) {}
 		}
