@@ -1,6 +1,7 @@
 package spms.dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -42,4 +43,41 @@ public class MemberDao {
 			try {if (stmt != null) stmt.close(); } catch (Exception e) {}
 		}
 	}
+	
+	public int insert(Member member) throws Exception {
+		PreparedStatement pstmt = null;
+	
+		try {
+			pstmt = connection.prepareStatement(
+					  "INSERT INTO MEMBERS(EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)"
+					+ " VALUES (?, ?, ?, NOW(), NOW())");
+			pstmt.setString(1, member.getEmail());
+			pstmt.setString(2, member.getPassword());
+			pstmt.setString(3, member.getName());
+			int result = pstmt.executeUpdate();
+			
+			return result;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+		}
+	}
+
+//	public int delete(int no) throws Exception {
+//		
+//	}
+//	
+//	public Member selectOne(int no) throws Exception {
+//		
+//	}
+//	
+//	public int update(Member member) throws Exception {
+//		
+//	}
+//	
+//	public Member exist(String email, String password) throws Exception {
+//		// 있으면 return member object , 없으면 null
+//	}
+	
 }
