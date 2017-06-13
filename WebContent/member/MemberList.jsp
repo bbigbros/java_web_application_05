@@ -17,7 +17,7 @@
 	<a href='update?no=${member.no }'>${member.name }</a>,
 	${member.email },
 	${member.createdDate }
-<a href='delete?no=${member.no }'>[삭]</a><br/>
+<a href='delete?no=${member.no }'>[삭제]</a><br/>
 </c:forEach>
 <jsp:include page="/Tail.jsp"/>
 </body>
