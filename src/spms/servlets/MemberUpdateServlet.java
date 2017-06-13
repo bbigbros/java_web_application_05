@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.MemberDao;
 import spms.vo.Member;
 
 
@@ -22,31 +23,20 @@ public class MemberUpdateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		Connection conn = null;
-		Statement stmt = null;
-		ResultSet rs = null;
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection)sc.getAttribute("conn");
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(
-						"select MNO, EMAIL, MNAME, CRE_DATE from MEMBERS" +
-						" where MNO=" + request.getParameter("no"));
-			rs.next();
-			request.setAttribute(
-					"member", new Member().setNo(rs.getInt("MNO"))
-										  .setName(rs.getString("MNAME"))
-										  .setEmail(rs.getString("EMAIL"))
-										  .setCreatedDate(rs.getDate("CRE_DATE")));
+			Connection conn = (Connection)sc.getAttribute("conn");
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			request.setAttribute("member", memberDao.selectOne(Integer.parseInt(request.getParameter("no"))));
+			
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");
 			rd.forward(request, response);
-			
 		} catch (Exception e) {
-			throw new ServletException(e);
-		} finally {
-			try { if (rs != null) rs.close(); } catch (Exception e) {}
-			try { if (stmt != null) stmt.close(); } catch (Exception e) {}
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
 		}
 	}
 	
@@ -54,29 +44,23 @@ public class MemberUpdateServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection)sc.getAttribute("conn");
-			pstmt = conn.prepareStatement(
-					"update MEMBERS SET EMAIL=?, MNAME=?, MOD_DATE=now() WHERE MNO=?");
-			pstmt.setString(1, request.getParameter("email"));
-			pstmt.setString(2, request.getParameter("name"));
-			pstmt.setInt(3, Integer.parseInt(request.getParameter("no")));
+			Connection conn = (Connection)sc.getAttribute("conn");
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
 			
-			pstmt.executeUpdate();
+			memberDao.update(new Member().setEmail(request.getParameter("email"))
+										 .setName(request.getParameter("name"))
+										 .setPassword(request.getParameter("password"))
+										 .setNo(Integer.parseInt(request.getParameter("no"))));
+			
 			response.sendRedirect("list");
 			
 		} catch (Exception e) {
-//			throw new ServletException(e);
 			request.setAttribute("error", e);
-			// forward 방식
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
-		} finally {
-			try { if ( pstmt != null ) pstmt.close();} catch (Exception e) {}
 		}
 
 	}
