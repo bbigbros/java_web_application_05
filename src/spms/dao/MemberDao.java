@@ -7,6 +7,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletContext;
+
 import spms.vo.Member;
 
 public class MemberDao {
@@ -64,9 +66,24 @@ public class MemberDao {
 		}
 	}
 
-//	public int delete(int no) throws Exception {
-//		
-//	}
+	public int delete(int no) throws Exception {
+		PreparedStatement pstmt = null;
+		try {
+			pstmt = connection.prepareStatement("delete from MEMBERS where MNO=?");
+			pstmt.setInt(1, no);
+			int result = pstmt.executeUpdate();
+			
+			return result;
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+		}
+
+		
+		
+		
+	}
 //	
 //	public Member selectOne(int no) throws Exception {
 //		
