@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import spms.dao.MemberDao;
 import spms.vo.Member;
 
 /**
@@ -29,21 +30,16 @@ public class LogInServlet extends HttpServlet {
 
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection conn = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			conn = (Connection)sc.getAttribute("conn");
-			pstmt = conn.prepareStatement("select MNAME, EMAIL from MEMBERS" + " where EMAIL=? AND PWD=?");
-			pstmt.setString(1, request.getParameter("email"));
-			pstmt.setString(2, request.getParameter("password"));
-			rs = pstmt.executeQuery();
-			
-			if (rs.next()) {
-				Member member = new Member().setEmail(rs.getString("EMAIL"))
-											.setName(rs.getString("MNAME"));
+			Connection conn = (Connection)sc.getAttribute("conn");
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(conn);
+			Member member = memberDao.exist(request.getParameter("email"), request.getParameter("password"));
+			if (member != null){
 				HttpSession session = request.getSession();
 				session.setAttribute("member", member);
 				response.sendRedirect("../member/list");
@@ -52,11 +48,11 @@ public class LogInServlet extends HttpServlet {
 				rd.forward(request, response);
 			}
 		} catch (Exception e) {
-			throw new ServletException(e);
-		} finally {
-			try { if (rs != null) rs.close(); } catch (Exception e) {}
-			try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
-		}
+			e.printStackTrace();
+			request.setAttribute("error", e);
+			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
+			rd.forward(request, response);
+		} 
 	}
 
 }

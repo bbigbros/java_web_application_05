@@ -119,8 +119,26 @@ public class MemberDao {
 			
 		}
 	}
-//	
-//	public Member exist(String email, String password) throws Exception {
-//		// 있으면 return member object , 없으면 null
-//	}
+	
+	public Member exist(String email, String password) throws Exception {
+		// 있으면 return member object , 없으면 null
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try {
+			pstmt = connection.prepareStatement("select MNAME, EMAIL from MEMBERS" + " where EMAIL=? AND PWD=?");
+			pstmt.setString(1, email);
+			pstmt.setString(2, password);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				return new Member().setEmail(rs.getString("EMAIL")).setName(rs.getString("MNAME"));
+			} else {
+				return null;
+			}
+		} catch (Exception e) {
+			throw e;
+		} finally {
+			try { if (rs != null) rs.close(); } catch (Exception e) {}
+			try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+		}
+	}
 }
