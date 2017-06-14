@@ -7,22 +7,29 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.servlet.ServletContext;
-
+import spms.util.DBConnectionPool;
 import spms.vo.Member;
 
 public class MemberDao {
-	Connection connection;
 	
-	public void setConnection(Connection connection) {
-		this.connection = connection;
+//	
+//	public void setConnection(Connection connection) {
+//		this.connection = connection;
+//	}
+	
+	DBConnectionPool connPool;
+	
+	public void setDbConnectionPool(DBConnectionPool connPool) {
+		this.connPool = connPool;
 	}
 	
 	public List<Member> selectList() throws Exception {
+		Connection connection = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		
 		try {
+			connection = connPool.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
 					"SELECT MNO, MNAME, EMAIL, CRE_DATE" + 
