@@ -28,9 +28,7 @@ public class MemberListServlet extends HttpServlet {
 		try {
 			// Connection이란 무엇인지? getServletContext의미란 무엇인지 다시 보기~
 			ServletContext sc = this.getServletContext();
-			Connection conn = (Connection)sc.getAttribute("conn");
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			
 			// requset에 회원정보를 보관한다.
 			request.setAttribute("members",	memberDao.selectList());
