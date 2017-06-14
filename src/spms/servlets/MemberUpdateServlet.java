@@ -26,9 +26,7 @@ public class MemberUpdateServlet extends HttpServlet {
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			Connection conn = (Connection)sc.getAttribute("conn");
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			request.setAttribute("member", memberDao.selectOne(Integer.parseInt(request.getParameter("no"))));
 			
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberUpdate.jsp");

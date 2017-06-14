@@ -24,9 +24,7 @@ public class MemberDeleteServlet extends HttpServlet {
 	
 		try {
 			ServletContext sc = this.getServletContext();
-			Connection conn = (Connection)sc.getAttribute("conn");
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			memberDao.delete(Integer.parseInt(request.getParameter("no")));
 			
 			response.sendRedirect("list");
