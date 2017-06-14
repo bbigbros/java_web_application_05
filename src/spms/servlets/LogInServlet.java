@@ -35,9 +35,7 @@ public class LogInServlet extends HttpServlet {
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			Connection conn = (Connection)sc.getAttribute("conn");
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			Member member = memberDao.exist(request.getParameter("email"), request.getParameter("password"));
 			if (member != null){
 				HttpSession session = request.getSession();
