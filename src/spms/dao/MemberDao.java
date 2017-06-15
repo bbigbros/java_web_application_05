@@ -55,8 +55,10 @@ public class MemberDao {
 	
 	public int insert(Member member) throws Exception {
 		PreparedStatement pstmt = null;
-	
+		Connection connection = null;
+		
 		try {
+			connection = connPool.getConnection();
 			pstmt = connection.prepareStatement(
 					  "INSERT INTO MEMBERS(EMAIL, PWD, MNAME, CRE_DATE, MOD_DATE)"
 					+ " VALUES (?, ?, ?, NOW(), NOW())");
@@ -75,7 +77,9 @@ public class MemberDao {
 
 	public int delete(int no) throws Exception {
 		PreparedStatement pstmt = null;
+		Connection connection = null;
 		try {
+			connection = connPool.getConnection();
 			pstmt = connection.prepareStatement("delete from MEMBERS where MNO=?");
 			pstmt.setInt(1, no);
 			int result = pstmt.executeUpdate();
@@ -91,7 +95,9 @@ public class MemberDao {
 	public Member selectOne(int no) throws Exception {
 		Statement stmt = null;
 		ResultSet rs = null;
+		Connection connection = null;
 		try {
+			connection = connPool.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery("SELECT MNO, MNAME, EMAIL, CRE_DATE FROM MEMBERS where MNO=" + no);
 			rs.next();
@@ -110,7 +116,10 @@ public class MemberDao {
 	public int update(Member member) throws Exception {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection connection = null;
+		
 		try {
+			connection = connPool.getConnection();
 			pstmt = connection.prepareStatement("update MEMBERS SET EMAIL=?, MNAME=?, MOD_DATE=now() WHERE MNO=?");
 			pstmt.setString(1, member.getEmail());
 			pstmt.setString(2, member.getName());
@@ -131,7 +140,10 @@ public class MemberDao {
 		// 있으면 return member object , 없으면 null
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
+		Connection connection = null;
+		
 		try {
+			connection = connPool.getConnection();
 			pstmt = connection.prepareStatement("select MNAME, EMAIL from MEMBERS" + " where EMAIL=? AND PWD=?");
 			pstmt.setString(1, email);
 			pstmt.setString(2, password);

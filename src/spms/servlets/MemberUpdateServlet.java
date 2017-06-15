@@ -46,7 +46,6 @@ public class MemberUpdateServlet extends HttpServlet {
 			ServletContext sc = this.getServletContext();
 			Connection conn = (Connection)sc.getAttribute("conn");
 			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
 			
 			memberDao.update(new Member().setEmail(request.getParameter("email"))
 										 .setName(request.getParameter("name"))
