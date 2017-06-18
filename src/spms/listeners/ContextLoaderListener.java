@@ -20,9 +20,9 @@ public class ContextLoaderListener implements ServletContextListener {
 			System.out.println("ServletContextListener 시작");
 			ServletContext sc = event.getServletContext();
 			connPool = new DBConnectionPool(
+						sc.getInitParameter("driver"),
 						sc.getInitParameter("url"),
 						sc.getInitParameter("username"),
-						sc.getInitParameter("password"),
 						sc.getInitParameter("password"));
 			MemberDao memberDao = new MemberDao();
 			memberDao.setDbConnectionPool(connPool);
