@@ -21,12 +21,14 @@ public class DBConnectionPool {
 	
 	public Connection getConnection() throws Exception {
 		if (connList.size() > 0) {
+			System.out.println("getConnection Using..");
 			Connection conn = connList.remove(0);
 			// 일정 시간이 지나면 서버와 연결이 끊기도록 작업.
 			if(conn.isValid(10)) {
 				return conn;
 			}
 		}
+		System.out.println("getConnection not size > 0");
 		return DriverManager.getConnection(url, username, password);
 	}
 	

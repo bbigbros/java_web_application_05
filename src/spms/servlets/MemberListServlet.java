@@ -32,7 +32,8 @@ public class MemberListServlet extends HttpServlet {
 			
 			// requset에 회원정보를 보관한다.
 			request.setAttribute("members",	memberDao.selectList());
-			response.setContentType("text/html; charset=UTF-8");
+			response.setContentType
+			("text/html; charset=UTF-8");
 			
 			// Dispatcher를 사용해 jsp로 출력을 위임한다.(include)
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberList.jsp");
